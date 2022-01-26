@@ -8,12 +8,13 @@ import io.ktor.server.netty.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.io.File
+import kotlin.io.path.*
 
 fun main() {
     embeddedServer(Netty, port = 8083) {
-        val file = File("count.txt")
+        val file = Path("count.txt")
 
-        if(!file.exists()) file.createNewFile()
+        if(!file.exists()) file.createFile()
 
         routing {
             get("/") {
