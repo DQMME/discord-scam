@@ -7,17 +7,33 @@ import io.ktor.server.http.content.*
 import io.ktor.server.netty.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import java.io.File
 import kotlin.io.path.*
 
 fun main() {
     embeddedServer(Netty, port = 8083) {
         val file = Path("count.txt")
 
-        if(!file.exists()) file.createFile()
+        if (!file.exists()) file.createFile()
 
         routing {
             get("/") {
+                call.respondText(
+                    this::class.java.classLoader.getResource("languages.html")!!.readText(),
+                    ContentType.Text.Html
+                )
+            }
+            get("/en") {
+                val count = file.readText().toIntOrNull() ?: 0
+
+                file.writeText("${count + 1}")
+
+                call.respondText(
+                    this::class.java.classLoader.getResource("index-en.html")!!.readText()
+                        .replace("Views: ", "Views: ${count + 1}"),
+                    ContentType.Text.Html
+                )
+            }
+            get("/de") {
                 val count = file.readText().toIntOrNull() ?: 0
 
                 file.writeText("${count + 1}")
